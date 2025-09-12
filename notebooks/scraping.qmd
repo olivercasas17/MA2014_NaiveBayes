@@ -1,0 +1,162 @@
+---
+title: "scraping"
+format: html
+editor: source
+---
+
+Realizaremos el web scraping de la página Your Ghost Stories, un sitio que recopila relatos de eventos paranormales a través del mundo.
+
+```{r}
+library(robotstxt)
+library(rvest)
+library(tidymodels)
+library(tibble)
+
+```
+
+Primero verificamos si podemos hacer scraping de la pagina web.
+
+```{r}
+paths_allowed("https://www.yourghoststories.com/")
+```
+
+Como el scraping esta permitido en la página web ahora leemos la página.
+
+```{r}
+page = read_html("https://www.yourghoststories.com/real-ghost-stories.php")
+page
+```
+
+```{r}
+typeof(page)
+```
+
+```{r}
+class(page)
+```
+
+Obtenemos las distintas categorias que existen.
+
+```{r}
+categorias_links = page |> 
+  html_nodes(".two_column_layout_col a") |>
+  html_attr("href") |>
+  url_absolute("https://yourghoststories.com/")
+
+categorias_url = gsub("&page=1$", "", categorias_links)
+```
+
+```{r}
+print(categorias_links)
+```
+
+Ahora obtenemos el número de paginas de cada categorias donde estan las historias.
+
+```{r}
+urls <- list()
+
+for (cat_url in categorias_links) {
+  base_url = sub("&page=.*", "", cat_url)
+  
+  paginas = read_html(cat_url) |>
+    html_nodes("span , .pagination a") |>
+    html_text() |>
+    unique()
+  
+  for (i in paginas) {
+    url_pag = paste0(base_url, "&page=", i)
+    urls = c(urls, url_pag)
+  }
+}
+```
+
+```{r}
+print(urls)
+```
+
+Ahora necesitamos el link de cada historia.
+
+```{r}
+links_historias = list()
+
+for (page_link in urls) {
+  cat("Leyendo:", page_link, "\n")
+  tryCatch({
+    historia_link = read_html(page_link) |> 
+      html_nodes("strong a") |>
+      html_attr("href") |>
+      url_absolute("https://yourghoststories.com/")
+    
+    links_historias = c(links_historias, historia_link)
+  }, error = function(e) {
+    message("Error en: ", page_link)
+  })
+}
+```
+
+```{r}
+length(links_historias)
+```
+
+Ahora para cada historia, sacamos:
+
+```{r}
+historias = tibble(
+  categoria = character(),
+  pais = character(),
+  texto = character()
+)
+
+i = 0
+for (story in links_historias) {
+  i = i + 1
+  tryCatch({
+    # Leer solo una vez el HTML de la historia
+    page_story = read_html(story)
+    
+    pais = page_story |> 
+      html_nodes("#body-content-publication a:nth-child(7)") |>
+      html_text()
+    
+    categoria = page_story |> 
+      html_nodes("a:nth-child(11)") |>
+      html_text()
+    
+    historia = page_story |> 
+      html_nodes("#story p") |>
+      html_text() |>
+      paste(collapse = " ")
+    
+    historias = historias |> 
+      add_row(
+        categoria = categoria,
+        pais = pais,
+        texto = historia
+      )
+    
+    # Contador cada 100 iteraciones
+    if (i %% 500 == 0) {
+      cat("Procesadas:", i, "historias\n")
+    }
+    
+  }, error = function(e){
+    message("Error en la URL: ", story, " -> ", e$message)
+  })
+}
+```
+
+```{r}
+readr::write_csv(historias, "historias2.csv")
+```
+
+```{r}
+saveRDS(historias, "historias2.rds")
+```
+
+```{r}
+h <- readRDS("historias2.rds")
+```
+
+```{r}
+lengths(h)
+```
