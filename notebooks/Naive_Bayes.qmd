@@ -1,0 +1,145 @@
+---
+title: "Naive Bayes"
+format: html
+editor: visual
+---
+
+```{r}
+data <- readRDS("../data/historias.rds")
+```
+
+```{r}
+head(data)
+```
+
+```{r}
+#install.packages("superml")
+```
+
+```{r}
+str(data)
+```
+
+```{r}
+library(dbplyr)
+library(superml)
+library(dplyr)
+```
+
+```{r}
+#borre las columnas que tenian las categorias buggeadas
+data <- data |>
+  group_by(categoria) |>
+  filter(n() >= 50) |>
+  ungroup()
+```
+
+```{r}
+table(data$categoria)
+```
+
+```{r}
+nrow(data)
+```
+
+```{r}
+set.seed(1234)
+muestra = sample_n(data, 5000, replace=FALSE)
+```
+
+Esto es lo del sparse matrix
+```{r}
+cv <- CountVectorizer$new(
+  max_features = 2000,
+  min_df = 0.01,
+  ngram_range = c(1,2),
+  remove_stopwords = TRUE,
+  lowercase = TRUE,
+  )
+```
+
+```{r}
+sparse_matrix <- cv$fit_transform(muestra$texto)
+dim(sparse_matrix)
+```
+
+```{r}
+sparse_matrix[1:5, 1:10]
+```
+
+```{r}
+head(muestra)
+```
+
+```{r}
+sparse_matrix_df <- as.data.frame(as.matrix(sparse_matrix))
+```
+
+```{r}
+muestra_tokens <- muestra |>
+                    select(categoria) |>
+                      mutate(categoria = factor(categoria)) |>
+                        bind_cols(sparse_matrix_df)
+head(muestra_tokens)
+```
+```{r}
+dim(muestra_tokens)
+```
+
+
+```{r}
+#install.packages("caret")
+```
+
+A partir de aqui es lo del clasificador
+```{r}
+library(e1071)
+library(tidymodels)
+library(caret)
+```
+
+```{r}
+set.seed(1234)
+historias_split = initial_split(muestra_tokens, prop=0.8)
+historias_train = training(historias_split)
+historias_test = testing(historias_split)
+```
+
+NaiveBayes con a libreria 
+```{r}
+Nb_cl = naiveBayes(categoria ~ ., data = historias_train, laplace=1)
+y_pred = predict(Nb_cl, newdata = historias_test)
+confusionMatrix(y_pred, historias_test$categoria)
+```
+
+
+```{r}
+#install.packages("naivebayes")
+library(naivebayes)
+```
+
+```{r}
+Nb_cl_2 = naive_bayes(categoria ~ ., historias_train)
+y_pred_2 = predict(Nb_cl_2, newdata = historias_test,type="class")
+confusionMatrix(y_pred_2, historias_test$categoria)
+```
+
+```{r}
+table(y_pred)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
