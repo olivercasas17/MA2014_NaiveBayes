@@ -3,3 +3,19 @@ title: "Articulo_3"
 format: html
 editor: visual
 ---
+
+#Introducción
+
+En este proyecto se realiza un análisis de historias paranormales recopiladas de diversas fuentes de internet mediante web scraping, para estudiar patrones y clasificar los relatos según su tipo. La información obtenida incluye el texto de la historia, la categoría asignada y el país de origen. El objetivo principal es construir un clasificador automático capaz de predecir la categoría de una historia nueva a partir de su contenido textual.
+
+Se utiliza el método de Naive Bayes, un clasificador de categoría de texto basado en el teorema de Bayes, ideal para problemas de clasificación de texto debido a su simplicidad, eficiencia y buen desempeño en datasets grandes. Este enfoque permite calcular la probabilidad de que un relato pertenezca a cada categoría, considerando la frecuencia de las palabras en las historias.
+
+#Metodología
+
+El presente estudio se basó en la construcción de un modelo de clasificación de texto a partir de datos obtenidos mediante scraping de una página web con historias de terror. Inicialmente, la información recolectada se organizó y almacenó en un data.frame, conservando las variables relevantes, tales como la categoría, el país de origen y el contenido textual. Esta etapa fue fundamental para garantizar la integridad de los datos y preparar la información para su posterior análisis.
+
+Posteriormente, se realizó un preprocesamiento del texto con el objetivo de normalizarlo y transformarlo en una representación adecuada para los algoritmos de aprendizaje automático. Entre las técnicas aplicadas se incluyó la dicotomización, eliminación de palabras irrelevantes y construcción de una matriz de términos, que permitió convertir el texto en un formato cuantificable.
+
+Con la matriz de términos lista, los datos se dividieron en conjuntos de entrenamiento y prueba, lo que posibilitó entrenar el modelo sobre una parte de la información y evaluar su desempeño sobre datos no vistos previamente. Para la clasificación se empleó un modelo de Naive Bayes, reconocido por su eficiencia en tareas de clasificación de texto y por su capacidad de manejar matrices dispersas de gran dimensión.
+
+Finalmente, se generaron las predicciones sobre el conjunto de prueba y se evaluó el desempeño del modelo mediante métricas de clasificación, como la matriz de confusión y la proporción de aciertos. Esta metodología permitió establecer un flujo sistemático y reproducible para abordar la clasificación de textos en el dataset, asegurando que cada etapa estuviera claramente definida desde la recolección hasta la evaluación del modelo.
