@@ -1,0 +1,159 @@
+---
+title: "sparse matrix"
+format: html
+editor: source
+---
+
+```{r}
+library(dplyr)
+library(stringr)
+library(tidytext)
+library(knitr)
+library(tidyr)
+library(kableExtra)
+library(ggplot2)
+library(Matrix)
+```
+
+Lectura del objeto de R donde se guardo la información
+```{r}
+historias = readRDS("data/historias.rds")
+```
+
+
+```{r}
+historias = historias |>
+  mutate(texto = tolower(texto) |>
+            str_replace_all("[[:punct:]]", " ") |>
+            str_replace_all("[[:digit:]]", " ") |>
+            str_squish()    
+         )
+```
+
+```{r}
+historias_words = historias |>
+  unnest_tokens(output = word, input = texto) 
+```
+
+Frecuencua de palabras por categoria con las "stop words"
+```{r}
+historias_words |>
+  count(categoria, word, sort = TRUE) |>
+  group_by(categoria) |>
+  slice_head(n = 10) |>
+  pivot_wider(
+    names_from = categoria,
+    values_from = n,
+    values_fn = as.character,
+    values_fill = "Not in top 10"
+  ) |>
+kable() |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    font_size = 12,
+    position = "center"
+  )
+```
+
+Frecuencia de palabras sin las "stop words"
+```{r}
+historias_words |>
+  anti_join(stop_words) |>
+  count(categoria, word, sort = TRUE) |>
+  group_by(categoria) |>
+  slice_head(n = 20) |>
+  pivot_wider(
+    names_from = categoria,
+    values_from = n,
+    values_fn = as.character,
+    values_fill = "Not in top 10"
+  ) |>
+kable() |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    font_size = 12,
+    position = "center"
+  )
+```
+
+Grafica de palabras más frecuentes en los textos
+```{r}
+historias_words |>
+  anti_join(stop_words, by = "word") |>
+  count(word, sort = TRUE) |>
+  slice_head(n = 20) |>
+  ggplot(aes(x = n, y = reorder(word, n))) +
+  geom_col(fill = "steelblue") +
+  labs(x = "Frecuencia", y = NULL,
+       title = "Palabras más frecuentes en los textos") +
+  theme_minimal()
+```
+
+```{r}
+palabras_freq_1 <- historias_words |>
+  anti_join(stop_words, by = "word") |>
+  count(word) |>
+  filter(n == 1) |>
+  summarise(cantidad = n())
+
+print(palabras_freq_1)
+```
+
+```{r}
+max_freq <- 50
+
+palabras_raras <- historias_words |>
+  anti_join(stop_words, by = "word") |>
+  count(word) |>
+  filter(n <= max_freq) |>
+  summarise(cantidad = n())
+
+print(palabras_raras)
+```
+
+
+```{r}
+length(unique(historias$categoria))
+```
+
+```{r}
+categorias = c("A Haunted Life",
+               "Apparitions / Voices / Touches",
+               "Children Who See Spirits",
+               "Demons / Possessions / Exorcisms",
+               "Family / Friends Visits",
+               "Ghost Hunting",
+               "Ghost Tours & Haunted Hotels",
+               "Haunted Items",
+               "Haunted Places",
+               "Misc",
+               "Non Human Entities",
+               "Old Hags / Night Attacks / Sleep Paralysis",
+               "Orbs / Lights / Mists",
+               "Ouija Board / Seances",
+               "Pets / Animals",
+               "Photographs / Videos / EVP",
+               "Poltergeists / Physical Manifestations",
+               "Psychic / Medium",
+               "Shadow People",
+               "Succubus / Incubus / Sexual Ghosts"
+               )
+```
+
+```{r}
+historias <- historias |>
+  filter(historias$categoria %in% categorias)
+```
+
+```{r}
+length(unique(historias$categoria))
+```
+
+
+
+
+
+
+

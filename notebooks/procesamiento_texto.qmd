@@ -1,0 +1,150 @@
+---
+title: "count vectorizer"
+format: html
+editor: source
+---
+
+```{r}
+library(dplyr)
+library(stringr)
+library(tidytext)
+library(knitr)
+library(tidyr)
+library(kableExtra)
+library(ggplot2)
+library(Matrix)
+```
+
+Lectura del objeto de R donde se guardo la información
+```{r}
+historias = readRDS("../data/historias.rds")
+```
+
+Ahora se necesita normalizar el texto, lo priemro es convertir el texto de las historias en minusculas.
+
+```{r}
+historias <- historias |>
+  mutate(texto = tolower(texto) |>
+            str_replace_all("[[:punct:]]", " ") |>
+            str_replace_all("[[:digit:]]", " ") |>
+            str_squish()    
+         )
+```
+
+Lista con los nombres de las categorias como vienen en la pagina web
+```{r}
+categorias = c("A Haunted Life",
+               "Apparitions / Voices / Touches",
+               "Children Who See Spirits",
+               "Demons / Possessions / Exorcisms",
+               "Family / Friends Visits",
+               "Ghost Hunting",
+               "Ghost Tours & Haunted Hotels",
+               "Haunted Items",
+               "Haunted Places",
+               "Misc",
+               "Non Human Entities",
+               "Old Hags / Night Attacks / Sleep Paralysis",
+               "Orbs / Lights / Mists",
+               "Ouija Board / Seances",
+               "Pets / Animals",
+               "Photographs / Videos / EVP",
+               "Poltergeists / Physical Manifestations",
+               "Psychic / Medium",
+               "Shadow People",
+               "Succubus / Incubus / Sexual Ghosts"
+               )
+```
+
+```{r}
+length(unique(historias$categoria))
+```
+
+Quitar las categorias que hayan tenido algun error.
+```{r}
+historias <- historias |>
+  filter(historias$categoria %in% categorias)
+```
+
+```{r}
+length(unique(historias$categoria))
+```
+### Extraer nombres para luego eliminarlos
+```{r}
+nombres_df <- read.csv("../data/Popular_Baby_Names.csv")
+
+nombres <- nombres_df |>
+  pull("Child.s.First.Name") |>
+  tolower()
+
+head(nombres)
+```
+
+```{r}
+length(nombres)
+```
+
+
+```{r}
+historias_words <- historias |>
+  mutate(doc_id = row_number()) |>
+  unnest_tokens(output = word, input = texto)
+```
+
+# Hacer una lista con las palabras menos frecuentes
+```{r}
+word_counts_total <- historias_words |>
+  count(word, sort = TRUE)
+
+rare_words <- word_counts_total |>
+  arrange(n) |>
+  slice_head(n = 31852) |> #31852
+  pull(word)
+
+```
+
+```{r}
+historias_words <- historias_words |>
+  filter(!word %in% stop_words$word) |>
+  filter(!word %in% rare_words) |>
+  filter(!word %in% nombres)
+
+word_counts <- historias_words |>
+  count(doc_id, word, sort = TRUE)
+
+terms_levels <- levels(factor(word_counts$word))
+
+dtm <- sparseMatrix(
+  i = word_counts$doc_id,
+  j = as.integer(factor(word_counts$word, levels = terms_levels)),
+  x = word_counts$n,
+  dimnames = list(
+    doc_id = as.character(seq_len(max(word_counts$doc_id))),
+    term   = terms_levels
+  )
+)
+
+dtm
+```
+
+```{r}
+dim(dtm)
+```
+
+Combinar dtm + categorias para usar tidymodels
+
+
+
+```{r}
+dtm_labels <- as_tibble(as.matrix(dtm)) |>
+  mutate(categoria = historias$categoria)
+```
+
+
+```{r}
+saveRDS(dtm_labels, "../data/sparse_matrix.rds")
+```
+
+
+
+

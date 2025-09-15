@@ -1,0 +1,110 @@
+---
+title: "naive_bayes"
+format: html
+editor: source
+---
+# Paquetes, lectura de datos y split
+```{r}
+library(e1071)
+library(dplyr)
+library(caret)
+library(tidymodels)
+library(naivebayes)
+```
+
+```{r}
+historias = readRDS("../data/sparse_matrix.rds")
+```
+
+Separar los datos en entrenamiento y prueba
+
+```{r}
+set.seed(1234)
+historias_split = initial_split(historias, prop = 0.7)
+```
+
+```{r}
+historias_train = training(historias_split)
+historias_test = testing(historias_split)
+```
+
+# Clasificador con todas las categorias
+## Usando la libreria e1071
+
+```{r}
+NB_cl = naiveBayes(categoria ~ ., data = historias_train)
+```
+
+```{r}
+y_pred = predict(NB_cl, newdata = historias_test)
+```
+
+```{r}
+cm = table(historias_test$categoria, y_pred)
+#cm
+```
+
+```{r}
+sum(diag(cm))/sum(cm)
+```
+
+## Usando la libreria naivebayes()
+```{r}
+NB_cl <- naive_bayes(categoria ~ ., data = historias_train)
+```
+
+```{r}
+y_pred <- predict(NB_cl, newdata = historias_test)
+```
+
+# Ahora con la dicotomización
+
+```{r}
+historias_D <- readRDS("../data/sparse_matrix.rds")
+
+historias_D <- historias_D |>
+  mutate(categoria = if_else(categoria == "Apparitions / Voices / Touches", "Apparitions / Voices / Touches",
+                             "otra"))
+
+```
+
+```{r}
+set.seed(1234)
+historiasD_split = initial_split(historias_D, prop = 0.7)
+```
+
+```{r}
+historiasD_train = training(historiasD_split)
+historiasD_test = testing(historiasD_split)
+```
+
+## Usando la libreria e1071
+```{r}
+NB_cl_D = naiveBayes(categoria ~ ., data = historiasD_train)
+```
+
+```{r}
+y_pred_D = predict(NB_cl_D, newdata = historiasD_test)
+```
+
+```{r}
+cmD = table(historiasD_test$categoria, y_pred_D)
+#cmD
+```
+
+accuracy
+```{r}
+sum(diag(cmD))/sum(cmD)
+```
+
+
+## Ahora con la naivebayes()
+```{r}
+library(naivebayes)
+
+NB_cl <- naive_bayes(categoria ~ ., data = historiasD_train, usepoisson = TRUE, laplace = 0)
+```
+
+```{r}
+y_pred <- predict(NB_cl, newdata = historiasD_test)
+```
