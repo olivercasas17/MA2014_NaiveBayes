@@ -25,7 +25,8 @@ para obtener un mejor clasificador.
   - `rvest` y `robotstxt` para web scraping.  
   - `tidyverse`, `tidytext` y `stringr` para manipulación y limpieza de texto.  
   - `caret` y `tidymodels` para evaluación de modelos y split de los datos.
-  - `naivebayes` y `e1071` para implementación del clasificador  
+  - `naivebayes` y `e1071` para implementación del clasificador
+- SelectorGadget para la estructura html de la pagina web
 
 
 ## Colaboradores
