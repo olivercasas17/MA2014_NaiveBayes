@@ -150,13 +150,7 @@ readr::write_csv(historias, "historias2.csv")
 ```
 
 ```{r}
-saveRDS(historias, "historias2.rds")
+saveRDS(historias, "historias.rds")
 ```
 
-```{r}
-h <- readRDS("historias2.rds")
-```
 
-```{r}
-lengths(h)
-```

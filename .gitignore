@@ -50,4 +50,5 @@ rsconnect/
 
 
 .Rproj
-DS_Store
+.DS_Store
+MA2014_NaiveBayes.Rproj
