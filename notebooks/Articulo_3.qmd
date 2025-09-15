@@ -4,11 +4,15 @@ format: html
 editor: visual
 ---
 
+#Abstract
+
+El siguiente trabajo toma un enfoque en la clasificación de textos en las historias de terror, donde las narraciones son comunmente mal clasificadas, el objetivo del proyecto es desarrollar un clasificador que mejore la predicción de las categorías a las que pertenecen las historias con base en los contenidos de las mismas, realizando sparse matrices para el procesamiento del texto, con la elimincaión de palabras innecesarias cómo nombres propios, la dicotomización de los datos y trabajando con grandes volúmenes de relatos se desarrolla un modelo que alcanza una exactitud elevada, pero no eficiente ni altamente significativa, demostrando que la clasificación de estos cuentos puede ser difícil de trabajar.
+
 #Introducción
 
-En este proyecto se realiza un análisis de historias paranormales recopiladas de diversas fuentes de internet mediante web scraping, para estudiar patrones y clasificar los relatos según su tipo. La información obtenida incluye el texto de la historia, la categoría asignada y el país de origen. El objetivo principal es construir un clasificador automático capaz de predecir la categoría de una historia nueva a partir de su contenido textual.
+En este proyecto se realiza un análisis de historias paranormales recopiladas una página web de historias paranormales mediante web scraping, una técnica para la extracción automática de datos la cual permite acceder a volúmenes grandes de texto, para estudiar patrones y clasificar los relatos según su tipo. La información obtenida incluye el texto de la historia, la categoría asignada y el país de origen. El objetivo principal es construir un clasificador automático capaz de predecir la categoría de una historia nueva a partir de su contenido textual.
 
-Se utiliza el método de Naive Bayes, un clasificador de categoría de texto basado en el teorema de Bayes, ideal para problemas de clasificación de texto debido a su simplicidad, eficiencia y buen desempeño en datasets grandes. Este enfoque permite calcular la probabilidad de que un relato pertenezca a cada categoría, considerando la frecuencia de las palabras en las historias.
+Se utiliza el método de Naive Bayes, un clasificador de categoría de texto basado en el teorema de Bayes, recurriremos a la construcción de sparse matrices para el análisis, ideal para problemas de clasificación de texto debido a su simplicidad, eficiencia y buen desempeño en datasets grandes. Este enfoque permite calcular la probabilidad de que un relato pertenezca a cada categoría, considerando la frecuencia de las palabras en las historias.
 
 #Metodología
 
@@ -19,3 +23,15 @@ Posteriormente, se realizó un preprocesamiento del texto con el objetivo de nor
 Con la matriz de términos lista, los datos se dividieron en conjuntos de entrenamiento y prueba, lo que posibilitó entrenar el modelo sobre una parte de la información y evaluar su desempeño sobre datos no vistos previamente. Para la clasificación se empleó un modelo de Naive Bayes, reconocido por su eficiencia en tareas de clasificación de texto y por su capacidad de manejar matrices dispersas de gran dimensión.
 
 Finalmente, se generaron las predicciones sobre el conjunto de prueba y se evaluó el desempeño del modelo mediante métricas de clasificación, como la matriz de confusión y la proporción de aciertos. Esta metodología permitió establecer un flujo sistemático y reproducible para abordar la clasificación de textos en el dataset, asegurando que cada etapa estuviera claramente definida desde la recolección hasta la evaluación del modelo.
+
+#Conclusiones
+
+El proyecto inició con la construcción de una base de datos de relatos paranormales mediante web scraping de la página Your Ghost Stories. Este proceso permitió recopilar información en bruto que contenía títulos, descripciones, lugares y categorías asociadas a distintos tipos de fenómenos. Sin embargo, estos datos estaban desorganizados y con mucho ruido, por lo que se implementaron técnicas de procesamiento de texto para limpiar y preparar la información. En esta etapa se eliminaron stop words, palabras poco comúnes y nombres propios, logrando así una representación más adecuada para el análisis computacional.
+
+Posteriormente, se transformaron los textos en una matriz dispersa (sparse matrix), una estructura fundamental para trabajar con datos de lenguaje natural, ya que permite representar grandes volúmenes de palabras con una alta eficiencia en memoria. Con esta matriz, se desarrollaron experimentos utilizando el algoritmo Naïve Bayes, entrenando y evaluando dos modelos diferentes.
+
+En la primera aproximación, se trabajó con todas las categorías originales de los relatos. Sin embargo, los resultados mostraron un desempeño extremadamente bajo, con una exactitud cercana al 0.1%, lo que indica que el modelo no logró capturar patrones claros en los datos debido a la complejidad y diversidad de las clases. Para mejorar el rendimiento, se aplicó un proceso de dicotomización, reduciendo el problema a solo dos clases: relatos relacionados con "Apparitions / Voices / Touches" y todos los demás fenómenos agrupados como "otra". Esta simplificación permitió que el modelo identificara patrones más definidos, alcanzando un desempeño mucho más aceptable, con una exactitud aproximada del 49.6%.
+
+Estos resultados reflejan los retos que implica trabajar con texto no estructurado y múltiples categorías, así como la importancia de la preparación de datos y la formulación adecuada del problema. Si bien el modelo dicotómico mostró mejoras considerables, aún existe espacio para optimizar el pipeline, ya sea mediante técnicas de ingeniería de características, algoritmos más avanzados o el uso de representaciones vectoriales como word embeddings. 
+
+Este trabajo nos mostró que crear un clasificador de textos puede ser difícil debido a la enorme cantidad de variables a considerar para el análisis, y en caso de lograr realizarse, la exactitud del modelo es increiblemente baja por la complejidad del trabajo a reaizar haciendo que las probabilidades de que el modelo clasifique correctamente sean igual de probables a que el modelo se equivoque.
