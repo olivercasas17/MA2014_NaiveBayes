@@ -10,6 +10,8 @@ library(dplyr)
 library(caret)
 library(tidymodels)
 library(naivebayes)
+library(yardstick)
+library(discrim)
 ```
 
 ```{r}
@@ -37,6 +39,7 @@ NB_cl = naiveBayes(categoria ~ ., data = historias_train)
 
 ```{r}
 y_pred = predict(NB_cl, newdata = historias_test)
+historias_test$categoria = factor(historias_test$categoria, levels = levels(y_pred))
 ```
 
 ```{r}
@@ -45,7 +48,23 @@ cm = table(historias_test$categoria, y_pred)
 ```
 
 ```{r}
-sum(diag(cm))/sum(cm)
+results <- tibble(
+  truth = historias_test$categoria,
+  predicted = y_pred
+)
+
+accuracy = accuracy(results, truth, predicted,)$.estimate
+precision = precision(results, truth, predicted, estimator = "macro")$.estimate
+recall = recall(results, truth, predicted, estimator = "macro")$.estimate
+f1_score = f_meas(results, truth, predicted, estimator = "macro")$.estimate
+
+metrics <- tibble(
+              accuracy,
+              precision,
+              recall,
+              f1_score
+)
+metrics
 ```
 
 ## Usando la libreria naivebayes()
@@ -55,6 +74,25 @@ NB_cl <- naive_bayes(categoria ~ ., data = historias_train)
 
 ```{r}
 y_pred <- predict(NB_cl, newdata = historias_test)
+```
+```{r}
+results <- tibble(
+  truth = historias_test$categoria,
+  predicted = y_pred
+)
+
+accuracy = accuracy(results, truth, predicted,)$.estimate
+precision = precision(results, truth, predicted, estimator = "macro")$.estimate
+recall = recall(results, truth, predicted, estimator = "macro")$.estimate
+f1_score = f_meas(results, truth, predicted, estimator = "macro")$.estimate
+
+metrics <- tibble(
+              accuracy,
+              precision,
+              recall,
+              f1_score
+)
+metrics
 ```
 
 # Ahora con la dicotomización
@@ -85,6 +123,7 @@ NB_cl_D = naiveBayes(categoria ~ ., data = historiasD_train)
 
 ```{r}
 y_pred_D = predict(NB_cl_D, newdata = historiasD_test)
+historiasD_test$categoria = factor(historiasD_test$categoria, levels = levels(y_pred_D))
 ```
 
 ```{r}
@@ -92,9 +131,25 @@ cmD = table(historiasD_test$categoria, y_pred_D)
 #cmD
 ```
 
-accuracy
+Metricas
 ```{r}
-sum(diag(cmD))/sum(cmD)
+results <- tibble(
+  truth = historiasD_test$categoria,
+  predicted = y_pred_D
+)
+
+accuracy = accuracy(results, truth, predicted,)$.estimate
+precision = precision(results, truth, predicted, estimator = "macro")$.estimate
+recall = recall(results, truth, predicted, estimator = "macro")$.estimate
+f1_score = f_meas(results, truth, predicted, estimator = "macro")$.estimate
+
+metrics <- tibble(
+              accuracy,
+              precision,
+              recall,
+              f1_score
+)
+metrics
 ```
 
 
@@ -107,4 +162,53 @@ NB_cl <- naive_bayes(categoria ~ ., data = historiasD_train, usepoisson = TRUE, 
 
 ```{r}
 y_pred <- predict(NB_cl, newdata = historiasD_test)
+historiasD_test$categoria = factor(historiasD_test$categoria, levels = levels(y_pred))
 ```
+
+```{r}
+results <- tibble(
+  truth = historiasD_test$categoria,
+  predicted = y_pred
+)
+
+accuracy = accuracy(results, truth, predicted,)$.estimate
+precision = precision(results, truth, predicted, estimator = "macro")$.estimate
+recall = recall(results, truth, predicted, estimator = "macro")$.estimate
+f1_score = f_meas(results, truth, predicted, estimator = "macro")$.estimate
+
+metrics <- tibble(
+              accuracy,
+              precision,
+              recall,
+              f1_score
+)
+metrics
+```
+##CrossValidation Laplace
+```{r}
+# Definir rango de valores para laplace y valores fijos para los otros parámetros
+laplace_grid <- expand.grid(
+  laplace = c(0, 0.5, 1, 2, 5),
+  usekernel = FALSE,   # FALSE si quieres Naive Bayes "clásico"
+  adjust = 1           # ajuste para kernel density (irrelevante si usekernel=FALSE)
+)
+
+# Control para cross-validation
+train_control <- trainControl(method = "cv", number = 5) # 5-fold CV
+
+# Ajustar el modelo usando caret para tunear laplace
+set.seed(123)
+NB_cv <- train(
+  categoria ~ ., 
+  data = historiasD_train,
+  method = "naive_bayes",
+  trControl = train_control,
+  tuneGrid = laplace_grid
+)
+
+# Revisar el mejor parámetro
+NB_cv$bestTune
+```
+
+
+
