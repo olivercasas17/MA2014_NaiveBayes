@@ -1,10 +1,9 @@
 ---
 title: "Clasificador Naive Bayes"
 author:
-  
-name: "Oliver Arturo Casas Pontanillo | A01645764"
-name: "Erik Abraham Jajan Díaz | A01644648"
-name: "José Luis Santos Montaño | A01781721"
+  - name: "Oliver Arturo Casas Pontanillo | A01645764"
+  - name: "Erik Abraham Jajan Díaz | A01644648"
+  - name: "José Luis Santos Montaño | A01781721"
 date: today
 format:
   pdf:
@@ -29,9 +28,9 @@ format:
     monofont: Courier New
     sansfont: Arial
 header-includes:
-  
-\usepackage{fvextra}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines=true,breakanywhere=true,commandchars=\{}}
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines=true,breakanywhere=true,commandchars=\\\{\}}
+  - \RecustomVerbatimEnvironment{Verbatim}{Verbatim}{breaklines=true,breakanywhere=true,frame=single}
 editor:
   source: true
   markdown:

@@ -1,0 +1,316 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  11pt,
+  a4paper,
+]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+    \setmainfont[]{Times New Roman}
+    \setsansfont[]{Arial}
+    \setmonofont[]{Courier New}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2.5cm]{geometry}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{3}
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines=true,breakanywhere=true,commandchars=\\\{\}}
+\RecustomVerbatimEnvironment{Verbatim}{Verbatim}{breaklines=true,breakanywhere=true,frame=single}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}{}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, boxrule=0pt, sharp corners, breakable, borderline west={3pt}{0pt}{shadecolor}, interior hidden, enhanced]}{\end{tcolorbox}}\fi
+\makeatother
+
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Clasificador Naive Bayes},
+  pdfauthor={Oliver Arturo Casas Pontanillo \textbar{} A01645764; Erik Abraham Jajan Díaz \textbar{} A01644648; José Luis Santos Montaño \textbar{} A01781721},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Clasificador Naive Bayes}
+\author{Oliver Arturo Casas Pontanillo \textbar{} A01645764 \and Erik
+Abraham Jajan Díaz \textbar{} A01644648 \and José Luis Santos Montaño
+\textbar{} A01781721}
+\date{2025-09-14}
+
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table of contents}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+
+\setstretch{1.5}
+https://github.com/olivercasas17/MA2014\_NaiveBayes
+
+\section{Abstract}\label{abstract}
+
+El siguiente trabajo toma un enfoque en la clasificación de textos en
+las historias de terror, el objetivo es clasificar las categorías a las
+que pertenecen las historias, basado en las frecuencias de las palabras
+mas utilizadas, realizando matrices sparse para capturar las mismas, con
+la eliminación de palabras innecesarias cómo stopwords o nombres
+propios, la dicotomización de los datos para mejorar el modelo, y
+trabajando con grandes volúmenes de relatos para desarrollar un modelo
+que alcanza una exactitud elevada, pero no demasiado eficiente,
+demostrando que la clasificación de estos cuentos puede ser difícil de
+trabajar.
+
+\section{Introducción}\label{introducciuxf3n}
+
+En este proyecto se realiza un análisis de historias paranormales
+recopiladas una página web de historias paranormales mediante web
+scraping, una técnica para la extracción automática de datos la cual
+permite acceder a volúmenes grandes de texto, para estudiar patrones y
+clasificar los relatos según su tipo. La información obtenida incluye el
+texto de la historia, la categoría asignada y el país de origen. El
+objetivo principal es construir un clasificador automático capaz de
+predecir la categoría de una historia nueva a partir de su contenido
+textual.
+
+Se utiliza el método de Naive Bayes, un clasificador de categoría de
+texto basado en el teorema de Bayes, recurriremos a la construcción de
+matrices sparse para el análisis, ideal para problemas de clasificación
+de texto debido a su simplicidad, eficiencia y buen desempeño en
+datasets grandes. Este enfoque permite calcular la probabilidad de que
+un relato pertenezca a cada categoría, considerando la frecuencia de las
+palabras en las historias.
+
+\section{Metodología}\label{metodologuxeda}
+
+El presente estudio se basó en la construcción de un modelo de
+clasificación de texto a partir de datos obtenidos mediante scraping de
+una página web con historias de terror. Inicialmente, la información
+recolectada se organizó y almacenó en un data.frame, conservando las
+variables relevantes, tales como la categoría, el país de origen y el
+contenido textual. Esta etapa fue fundamental para garantizar la
+integridad de los datos y preparar la información para su posterior
+análisis.
+
+Posteriormente, se realizó un preprocesamiento del texto con el objetivo
+de normalizarlo y transformarlo en una representación adecuada para los
+algoritmos de aprendizaje automático. Entre las técnicas aplicadas se
+incluyó la dicotomización, eliminación de palabras irrelevantes y
+construcción de una matriz de términos, que permitió convertir el texto
+en un formato cuantificable.
+
+Con la matriz de términos lista, los datos se dividieron en conjuntos de
+entrenamiento y prueba, lo que posibilitó entrenar el modelo sobre una
+parte de la información y evaluar su desempeño sobre datos no vistos
+previamente. Para la clasificación se empleó un modelo de Naive Bayes,
+reconocido por su eficiencia en tareas de clasificación de texto y por
+su capacidad de manejar matrices dispersas de gran dimensión.
+
+Finalmente, se generaron las predicciones sobre el conjunto de prueba y
+se evaluó el desempeño del modelo mediante métricas de clasificación,
+como la matriz de confusión, la exactitud, la precision y el recall.
+Esta metodología permitió establecer un flujo sistemático y reproducible
+para abordar la clasificación de textos en el dataset, asegurando que
+cada etapa estuviera claramente definida desde la recolección hasta la
+evaluación del modelo.
+
+\section{Aplicacion}\label{aplicacion}
+
+Para realizar este análisis trabajamos en el archivo Naive\_Bayes.qmd,
+despues de realizar la matriz de términos, pudimos hacer nuestro
+clasificador. Primero lo hicimos con la libreria e1071, y el resultado
+muy bajo, en todas las metricas cercano al 0.1\%. Despues lo realizamos
+con la libreria naivebayes, con la cual obtuvimos resultado
+practicamente identicos.
+
+Por lo tanto, para mejorar nuestro modelo, decidimos dicotomizar
+nuestras categorías, ya que nuestra base de datos contaba con muchas y
+nuestro modelo naive bayes no estaba funcionando correctamente con esos
+parámetros, por lo que nos quedamos con Apparitions / Voices / Touches,
+que era la categoria con más muestras. Una vez dicotomizados las
+categorias, probamos de nuevo a realizar nuestros modelos, esta vez con
+la libreria e1071 subio la accuracy a 49\%, y con la libreria naivebayes
+y modificando que la distribucion de las variables eran tipo poisson,
+subio el accuracy a 79\%.
+
+Por ultimo hicimos un cross-validation para encontrar el valor mas
+óptimo del laplace smoothing, sin embargo, se llego a la conclusion de
+que ese valor era 0, por lo que nuestro último modelo co 79\% de
+accuracy se quedo siendo el mejor.
+
+\section{Conclusiones}\label{conclusiones}
+
+Los resultados evidencian que la eficacia de Naive Bayes depende no solo
+del uso de librerías específicas, sino también de un adecuado
+preprocesamiento de los datos y de la correcta definición de las
+categorías de clasificación. Mientras que los modelos iniciales
+resultaron ineficaces, la estrategia de dicotomizar la variable objetivo
+y asumir una distribución Poisson para las variables permitió obtener un
+modelo con un rendimiento satisfactorio.
+
+En conclusión, este ejercicio muestra cómo la combinación de técnicas de
+simplificación de categorías y ajustes en la distribución de las
+variables puede transformar un modelo con métricas insignificantes en un
+clasificador robusto, alcanzando un 79\% de exactitud en la tarea
+planteada.
+
+Este trabajo nos mostró que crear un clasificador de textos puede ser
+difícil debido a la enorme cantidad de variables a considerar para el
+análisis, y en caso de lograr realizarse, la exactitud del modelo es
+increiblemente baja por la complejidad del trabajo a reaizar haciendo
+que las probabilidades de que el modelo clasifique correctamente sean
+igual de probables a que el modelo se equivoque.
+
+\section{Referencias}\label{referencias}
+
+https://www.yourghoststories.com/
+
+https://www.youtube.com/watch?v=99Hkmfb2i80
+
+https://arxiv.org/abs/1709.08314?
+
+
+
+
+\end{document}
